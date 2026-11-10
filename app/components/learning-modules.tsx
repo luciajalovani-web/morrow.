@@ -161,12 +161,14 @@ const moduleLabels = {
 const categoryTranslations: Record<InterfaceLocale, Record<string, string>> = {
   en: {
     "Greetings and introductions": "Greetings and introductions", "Family and relationships": "Family and relationships", "Food and drinks": "Food and drinks",
+    Fruits: "Fruits", Vegetables: "Vegetables",
     "Travel and transport": "Travel and transport", Education: "Education", "Work and business": "Work and business", "Daily routine": "Daily routine",
     Shopping: "Shopping", Health: "Health", Emotions: "Emotions", Technology: "Technology", Nature: "Nature", Culture: "Culture", Society: "Society",
     Environment: "Environment", Media: "Media", "Politics and current affairs": "Politics and current affairs", "Abstract concepts": "Abstract concepts",
   },
   fr: {
     "Greetings and introductions": "Salutations et présentations", "Family and relationships": "Famille et relations", "Food and drinks": "Alimentation et boissons",
+    Fruits: "Fruits", Vegetables: "Légumes",
     "Travel and transport": "Voyages et transports", Education: "Éducation", "Work and business": "Travail et affaires", "Daily routine": "Vie quotidienne",
     Shopping: "Achats", Health: "Santé", Emotions: "Émotions", Technology: "Technologie", Nature: "Nature", Culture: "Culture", Society: "Société",
     Environment: "Environnement", Media: "Médias", "Politics and current affairs": "Politique et actualité", "Abstract concepts": "Concepts abstraits",
@@ -519,7 +521,7 @@ function GrammarQuestionCard({
           </div>
         </div>
       )}
-      <div className="grammar-question-progress"><span>{learningUi(locale, "score")}: {score} / {total}</span><span>{Math.round(((index + (checked ? 1 : 0)) / total) * 100)}%</span><div role="progressbar" aria-valuenow={Math.round(((index + (checked ? 1 : 0)) / total) * 100)} aria-valuemin={0} aria-valuemax={100} aria-label={`${learningUi(locale, "questionProgress")} ${index + (checked ? 1 : 0)} / ${total}`}><i style={{ width: `${((index + (checked ? 1 : 0)) / total) * 100}%` }} /></div></div>
+      <div className="grammar-question-progress"><span>{learningUi(locale, "score")}: {score} / {total}</span></div>
       <p className="grammar-answer-count">{learningUi(locale, "rightAnswers")}: {progress.correctAnswers} · {learningUi(locale, "missedAnswers")}: {progress.incorrectAnswers}</p>
     </div>
   );
@@ -776,7 +778,12 @@ export function VocabularyModule({
   function speakWord() {
     if (!current || !("speechSynthesis" in window) || !("SpeechSynthesisUtterance" in window)) return;
     const utterance = new SpeechSynthesisUtterance(current.target);
-    utterance.lang = speechLanguage[language.slug];
+    const locale = language.slug === "french" ? "fr-FR" : speechLanguage[language.slug];
+    utterance.lang = locale;
+    const voices = window.speechSynthesis.getVoices();
+    const voice = voices.find((candidate) => candidate.lang.toLowerCase() === locale.toLowerCase())
+      ?? voices.find((candidate) => candidate.lang.toLowerCase().startsWith(locale.slice(0, 2).toLowerCase()));
+    if (voice) utterance.voice = voice;
     window.speechSynthesis.cancel();
     window.speechSynthesis.speak(utterance);
   }

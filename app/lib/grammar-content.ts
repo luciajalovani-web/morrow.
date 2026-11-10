@@ -4,6 +4,7 @@ import { educationalSources, contentVerification } from "@/app/lib/content-sourc
 import { additionalGrammarTopics } from "@/app/lib/grammar-additional-content";
 import { getEnglishCurriculumGrammarTopics } from "@/app/lib/english-curriculum-content";
 import { getFrenchCurriculumGrammarTopics } from "@/app/lib/french-curriculum-content";
+import { normalizeLaterGrammarTopics } from "@/app/lib/grammar-quiz-options";
 
 export type GrammarExerciseType =
   | "multiple-choice"
@@ -591,12 +592,12 @@ const seeds: GrammarSeed[] = [
   },
 ];
 
-export const grammarTopics = [
+export const grammarTopics = normalizeLaterGrammarTopics([
   ...seeds.map(seed),
   ...additionalGrammarTopics,
   ...(["a1", "a2", "b1", "b2", "c1", "c2"] as const).flatMap(getEnglishCurriculumGrammarTopics),
   ...(["a1", "a2", "b1", "b2", "c1", "c2"] as const).flatMap(getFrenchCurriculumGrammarTopics),
-];
+]);
 
 export function getGrammarTopics(language: LanguageSlug, level: LevelSlug): GrammarTopic[] {
   return grammarTopics.filter((topic) => topic.language === language && topic.level === level);
