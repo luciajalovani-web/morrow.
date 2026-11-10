@@ -18,6 +18,9 @@ export const metadata: Metadata = {
   title: "morrow — Find your words",
   description:
     "Learn English, French, Spanish, Italian and German with thoughtful, level-based lessons made for real life.",
+  icons: {
+    icon: "/logo.png",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
